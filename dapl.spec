@@ -4,7 +4,7 @@
 #
 Name     : dapl
 Version  : 2.1.10
-Release  : 1
+Release  : 3
 URL      : http://downloads.openfabrics.org/dapl/dapl-2.1.10.tar.gz
 Source0  : http://downloads.openfabrics.org/dapl/dapl-2.1.10.tar.gz
 Summary  : A Library for userspace access to RDMA devices using OS Agnostic DAT APIs, proxy daemon for offloading RDMA
@@ -13,8 +13,7 @@ License  : BSD-3-Clause CPL-1.0 GPL-2.0
 Requires: dapl-bin
 Requires: dapl-lib
 Requires: dapl-doc
-BuildRequires : libibverbs-dev
-BuildRequires : librdmacm-dev
+BuildRequires : rdma-core-dev
 
 %description
 Along with the OpenFabrics kernel drivers, libdat and libdapl provides a userspace
@@ -64,7 +63,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1506701333
+export SOURCE_DATE_EPOCH=1506709013
 %configure --disable-static
 make V=1  %{?_smp_mflags}
 
@@ -76,7 +75,7 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 make VERBOSE=1 V=1 %{?_smp_mflags} check
 
 %install
-export SOURCE_DATE_EPOCH=1506701333
+export SOURCE_DATE_EPOCH=1506709013
 rm -rf %{buildroot}
 %make_install
 
