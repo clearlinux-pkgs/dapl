@@ -4,7 +4,7 @@
 #
 Name     : dapl
 Version  : 2.1.10
-Release  : 4
+Release  : 5
 URL      : http://downloads.openfabrics.org/dapl/dapl-2.1.10.tar.gz
 Source0  : http://downloads.openfabrics.org/dapl/dapl-2.1.10.tar.gz
 Summary  : A Library for userspace access to RDMA devices using OS Agnostic DAT APIs, proxy daemon for offloading RDMA
