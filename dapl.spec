@@ -4,15 +4,16 @@
 #
 Name     : dapl
 Version  : 2.1.10
-Release  : 7
-URL      : http://downloads.openfabrics.org/dapl/dapl-2.1.10.tar.gz
-Source0  : http://downloads.openfabrics.org/dapl/dapl-2.1.10.tar.gz
+Release  : 8
+URL      : https://downloads.openfabrics.org/dapl/dapl-2.1.10.tar.gz
+Source0  : https://downloads.openfabrics.org/dapl/dapl-2.1.10.tar.gz
 Summary  : A Library for userspace access to RDMA devices using OS Agnostic DAT APIs, proxy daemon for offloading RDMA
 Group    : Development/Tools
 License  : BSD-3-Clause CPL-1.0 GPL-2.0
-Requires: dapl-bin
-Requires: dapl-lib
-Requires: dapl-doc
+Requires: dapl-bin = %{version}-%{release}
+Requires: dapl-lib = %{version}-%{release}
+Requires: dapl-license = %{version}-%{release}
+Requires: dapl-man = %{version}-%{release}
 BuildRequires : rdma-core-dev
 
 %description
@@ -23,6 +24,7 @@ atomic operations and rdma write with immediate data.
 %package bin
 Summary: bin components for the dapl package.
 Group: Binaries
+Requires: dapl-license = %{version}-%{release}
 
 %description bin
 bin components for the dapl package.
@@ -31,52 +33,76 @@ bin components for the dapl package.
 %package dev
 Summary: dev components for the dapl package.
 Group: Development
-Requires: dapl-lib
-Requires: dapl-bin
-Provides: dapl-devel
+Requires: dapl-lib = %{version}-%{release}
+Requires: dapl-bin = %{version}-%{release}
+Provides: dapl-devel = %{version}-%{release}
+Requires: dapl = %{version}-%{release}
 
 %description dev
 dev components for the dapl package.
 
 
-%package doc
-Summary: doc components for the dapl package.
-Group: Documentation
-
-%description doc
-doc components for the dapl package.
-
-
 %package lib
 Summary: lib components for the dapl package.
 Group: Libraries
+Requires: dapl-license = %{version}-%{release}
 
 %description lib
 lib components for the dapl package.
 
 
+%package license
+Summary: license components for the dapl package.
+Group: Default
+
+%description license
+license components for the dapl package.
+
+
+%package man
+Summary: man components for the dapl package.
+Group: Default
+
+%description man
+man components for the dapl package.
+
+
 %prep
 %setup -q -n dapl-2.1.10
+cd %{_builddir}/dapl-2.1.10
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
-export LANG=C
-export SOURCE_DATE_EPOCH=1506709013
+export LANG=C.UTF-8
+export SOURCE_DATE_EPOCH=1604540364
+export GCC_IGNORE_WERROR=1
+export AR=gcc-ar
+export RANLIB=gcc-ranlib
+export NM=gcc-nm
+export CFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
+export FCFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=4 "
+export FFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=4 "
+export CXXFLAGS="$CXXFLAGS -O3 -ffat-lto-objects -flto=4 "
 %configure --disable-static
-make V=1  %{?_smp_mflags}
+make  %{?_smp_mflags}
 
 %check
-export LANG=C
+export LANG=C.UTF-8
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
-make VERBOSE=1 V=1 %{?_smp_mflags} check
+make %{?_smp_mflags} check
 
 %install
-export SOURCE_DATE_EPOCH=1506709013
+export SOURCE_DATE_EPOCH=1604540364
 rm -rf %{buildroot}
+mkdir -p %{buildroot}/usr/share/package-licenses/dapl
+cp %{_builddir}/dapl-2.1.10/COPYING %{buildroot}/usr/share/package-licenses/dapl/71bdac1dfbfce7ee9b2a6b15cfc4592cd9da06f7
+cp %{_builddir}/dapl-2.1.10/LICENSE.txt %{buildroot}/usr/share/package-licenses/dapl/f5ba947029b3966f9c8bc410081423ceffe2d3fb
+cp %{_builddir}/dapl-2.1.10/LICENSE2.txt %{buildroot}/usr/share/package-licenses/dapl/6801ca41305a8c3fe8aaea79156f2f8d484da0b0
+cp %{_builddir}/dapl-2.1.10/LICENSE3.txt %{buildroot}/usr/share/package-licenses/dapl/911e21f497bc69ab35a1f085a4105027c7f175a2
 %make_install
 
 %files
@@ -108,11 +134,6 @@ rm -rf %{buildroot}
 /usr/lib64/libdaploucm.so
 /usr/lib64/libdat2.so
 
-%files doc
-%defattr(-,root,root,-)
-%doc /usr/share/man/man1/*
-%doc /usr/share/man/man5/*
-
 %files lib
 %defattr(-,root,root,-)
 /usr/lib64/libdaplofa.so.2
@@ -123,3 +144,19 @@ rm -rf %{buildroot}
 /usr/lib64/libdaploucm.so.2.0.0
 /usr/lib64/libdat2.so.2
 /usr/lib64/libdat2.so.2.0.0
+
+%files license
+%defattr(0644,root,root,0755)
+/usr/share/package-licenses/dapl/6801ca41305a8c3fe8aaea79156f2f8d484da0b0
+/usr/share/package-licenses/dapl/71bdac1dfbfce7ee9b2a6b15cfc4592cd9da06f7
+/usr/share/package-licenses/dapl/911e21f497bc69ab35a1f085a4105027c7f175a2
+/usr/share/package-licenses/dapl/f5ba947029b3966f9c8bc410081423ceffe2d3fb
+
+%files man
+%defattr(0644,root,root,0755)
+/usr/share/man/man1/dapltest.1
+/usr/share/man/man1/dtest.1
+/usr/share/man/man1/dtestcm.1
+/usr/share/man/man1/dtestsrq.1
+/usr/share/man/man1/dtestx.1
+/usr/share/man/man5/dat.conf.5
